@@ -11,9 +11,11 @@ import {
   Snackbar,
   Alert
 } from '@mui/material';
-import { Person as PersonIcon } from '@mui/icons-material';
+import { Person as PersonIcon, Assessment as AssessmentIcon } from '@mui/icons-material';
+import { Tabs, Tab, Button } from '@mui/material';
 import UserTable from './components/UserTable';
 import UserForm from './components/UserForm';
+import ReportScreen from './components/ReportScreen';
 import { cookieAPI } from './api';
 
 // Configuración del tema Material UI
@@ -37,6 +39,7 @@ const theme = createTheme({
 });
 
 function App() {
+  const [currentView, setCurrentView] = useState('usuarios'); // 'usuarios' o 'reporte'
   const [formOpen, setFormOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [snackbar, setSnackbar] = useState({ open: false, message: '', severity: 'success' });
@@ -97,6 +100,28 @@ function App() {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             ABM de Usuarios - Arquitectura Web
           </Typography>
+          
+          {/* Tabs de navegación */}
+          <Tabs 
+            value={currentView} 
+            onChange={(e, newValue) => setCurrentView(newValue)}
+            textColor="inherit"
+            indicatorColor="secondary"
+            sx={{ mr: 3 }}
+          >
+            <Tab 
+              icon={<PersonIcon />} 
+              label="Usuarios" 
+              value="usuarios"
+              iconPosition="start"
+            />
+            <Tab 
+              icon={<AssessmentIcon />} 
+              label="Reporte" 
+              value="reporte"
+              iconPosition="start"
+            />
+          </Tabs>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Typography variant="body2" sx={{ opacity: 0.8 }}>
               React + Express + REST API
@@ -152,11 +177,15 @@ function App() {
           </Box>
         </Box>
 
-        {/* Tabla de usuarios */}
-        <UserTable 
-          onEditUser={handleEditUser}
-          onAddUser={handleAddUser}
-        />
+        {/* Contenido según la vista seleccionada */}
+        {currentView === 'usuarios' ? (
+          <UserTable 
+            onEditUser={handleEditUser}
+            onAddUser={handleAddUser}
+          />
+        ) : (
+          <ReportScreen />
+        )}
 
         {/* Formulario de usuario */}
         <UserForm
